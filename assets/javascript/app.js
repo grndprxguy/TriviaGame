@@ -1,5 +1,6 @@
 // set variables
 var correct= 0;
+var firstRun = true;
 var incorrect= 0;
 var skipped= 0;
 var currentQuestion = 0;
@@ -55,7 +56,7 @@ var questions  = [{
 }, {
 	question: "Which Jessie had a 2011 hit with “Price Tag”",
 	answer: ["Jessie J", "Jessie G", "Jessie C", "Jessie D"],
-	correct: 1,
+	correct: 0,
 }, {
 	question: "How many times did Spaniard Seve Ballesteros win The Open”",
 	answer: ["4", "1", "3", "2"],
@@ -72,6 +73,7 @@ var questions  = [{
 
 // reset display
 var reset = function() {
+	clearInterval(timerId);
 	$('#question').html("");
 	$('#answers').html("");
 	$('#image').html("");
@@ -80,8 +82,7 @@ var reset = function() {
 };
 
 // countdown timer
-function timer() {
-	timeRemain--;
+function timer() {	
 	$("#timer").html("Time remaining: "+ timeRemain + " secs");
 	//if time runs out
 	if (timeRemain == 0) {
@@ -89,9 +90,11 @@ function timer() {
 		$('#question').html("<h1>Sorry, Time's up!</h1>");
 		$('#answers').html("<h1>The correct answer is "+ questions[currentQuestion].answer[correctAnswer] +"</h1>");
 		skipped++;
-		console.log("skipped "+ skipped);
+		console.log("skipped " + skipped)
+		newQuestion();
 	}
-	newQuestion();
+	timeRemain--;
+	
 }
 
 function showQuestion() {
@@ -108,7 +111,8 @@ function showQuestion() {
             var button = $('<button>');
             button.text(choice);
             button.attr('data-id', choice);
-            $('#answers').append(button);   
+            $('#answers').append(button);
+            console.log("run setanswer");   
      	} setAnswer(); 
     } else {
  	$('#answers').html("<input id = 'reset' type='submit' value='Restart Game'>");
@@ -119,16 +123,20 @@ function showQuestion() {
 
      
 $(document).ready(function() {
+	if (firstRun = true) {
 	$('#start').on('click',function () {
 		$(this).hide();
-		showQuestion();
+		firstRun = false;
+	showQuestion();	
 	})
+	}
 });
 
 // answer button functionality
 function setAnswer() {
 $("#timer").html("Time remaining: "+ timeRemain + " secs");
 $("#answers").on("click", "button", function nextQuestion(){
+	console.log("current question "+currentQuestion);
 	clearInterval(timerId);
 	var highlight = $(this).css("background-color", "yellow");
 	// correct answer selected
