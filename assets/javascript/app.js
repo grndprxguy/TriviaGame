@@ -76,7 +76,7 @@ var reset = function() {
 	$('#answers').html("");
 	$('#image').html("");
 	timeRemain = 15;
-	// showQuestion();
+	showQuestion();
 };
 
 // countdown timer
@@ -91,6 +91,7 @@ function timer() {
 		skipped++;
 		console.log("skipped "+ skipped);
 	}
+	newQuestion();
 }
 
 function showQuestion() {
@@ -107,11 +108,10 @@ function showQuestion() {
             var button = $('<button>');
             button.text(choice);
             button.attr('data-id', choice);
-            $('#answers').append(button);
-     	} 
+            $('#answers').append(button);   
+     	} setAnswer(); 
     } else {
- 	$('#answers').append(button);
- 	button.text("Restart");
+ 	$('#answers').html("<input id = 'reset' type='submit' value='Restart Game'>");
  	};
  	timerId = setInterval(timer,1000);
 };
@@ -119,12 +119,12 @@ function showQuestion() {
 
      
 $(document).ready(function() {
-$('#start').on('click',function () {
-	$(this).hide();
-	showQuestion();
-	setAnswer();
-})
+	$('#start').on('click',function () {
+		$(this).hide();
+		showQuestion();
+	})
 });
+
 // answer button functionality
 function setAnswer() {
 $("#timer").html("Time remaining: "+ timeRemain + " secs");
@@ -140,13 +140,14 @@ $("#answers").on("click", "button", function nextQuestion(){
 	$("#answerStatus").html("<h1>Sorry, the correct answer is "+ questions[currentQuestion].answer[correctAnswer] +"</h1>");
 	incorrect++;
 	console.log("incorrect" + incorrect);
-	}	
+	}
+	newQuestion();	
 	})
 };
 
-function nextQuestion() {
+function newQuestion() {
 	currentQuestion++;
-	console.log(currentQuestion)
+	setTimeout(reset,1000*2);
 }
 
 
