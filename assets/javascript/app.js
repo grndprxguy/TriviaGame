@@ -3,7 +3,10 @@ var correct= 0;
 var incorrect= 0;
 var skipped= 0;
 var currentQuestion = 0;
-var timeCount = 15;
+var firstTime = true;
+var timeRemain = 5;
+var correctAnswer;
+var timerId;
 // questions and answers
 var questions  = [{
 	question: "Which US state is named on the label of a Jack Daniels bottle",
@@ -66,44 +69,85 @@ var questions  = [{
 	answer: ["Coriolanus", "All’s Well That Ends Well", "Twelfth Night", "Timon of Athens"],
 	correct: 2,
 }];
-$(document).ready(function () {
-	showQuestion();
-})
+
+// reset display
+var reset = function() {
+	$('#question').html("");
+	$('#answers').html("");
+	$('#image').html("");
+	timeRemain = 15;
+	// showQuestion();
+};
+
+// countdown timer
+function timer() {
+	timeRemain--;
+	$("#timer").html("Time remaining: "+ timeRemain + " secs");
+	//if time runs out
+	if (timeRemain == 0) {
+		clearInterval(timerId);
+		$('#question').html("<h1>Sorry, Time's up!</h1>");
+		$('#answers').html("<h1>The correct answer is "+ questions[currentQuestion].answer[correctAnswer] +"</h1>");
+		skipped++;
+		console.log("skipped "+ skipped);
+	}
+}
 
 function showQuestion() {
 	var question = questions[currentQuestion].question;
 	var numAnswers = questions[currentQuestion].answer.length;
+	correctAnswer = questions[currentQuestion].correct;
+	var buttonsArr = [];
 	var choice;
-	// display countdown timer
-	$("#timer").html("Time remaining: " + "00:" + timeCount + " secs");
-	// Set the questionClass text to the current question
-	$('#question').text(question + "?");
-
-	// Remove all current <li> elements (if any)
-	$('#answers').find("li").remove();
-
-	for (i = 0; i < numAnswers; i++) {
-		choice = questions[currentQuestion].answer[i];
-		$('<li>' + choice + '</li>').appendTo('#answers');
-		console.log(choice);
-	}
+	if (questions[currentQuestion]){
+		// set answer buttons
+		$('#question').text(question + "?");
+        for (i = 0; i < numAnswers; i++) {
+        	choice = questions[currentQuestion].answer[i];
+            var button = $('<button>');
+            button.text(choice);
+            button.attr('data-id', choice);
+            $('#answers').append(button);
+     	} 
+    } else {
+ 	$('#answers').append(button);
+ 	button.text("Restart");
+ 	};
+ 	timerId = setInterval(timer,1000);
 };
 
-// $("#answers").on("click", "div", function(){
-// 	clearInterval(timeCount);
-// 	console.log($(this).text());
-// 	var highlight = $(this).css("background-color", "yellow");
 
-// });
+     
+$(document).ready(function() {
+$('#start').on('click',function () {
+	$(this).hide();
+	showQuestion();
+	setAnswer();
+})
+});
+// answer button functionality
+function setAnswer() {
+$("#timer").html("Time remaining: "+ timeRemain + " secs");
+$("#answers").on("click", "button", function nextQuestion(){
+	clearInterval(timerId);
+	var highlight = $(this).css("background-color", "yellow");
+	// correct answer selected
+	if ($(this).text() == questions[currentQuestion].answer[correctAnswer]) {
+	$("#answerStatus").html("That's right! Great job!");
+	correct++;
+	console.log("correct " + correct);
+	} else {
+	$("#answerStatus").html("<h1>Sorry, the correct answer is "+ questions[currentQuestion].answer[correctAnswer] +"</h1>");
+	incorrect++;
+	console.log("incorrect" + incorrect);
+	}	
+	})
+};
 
- // var timer = function() {
- //        timeCount--;
- //        if (timeCount <= 0) {
- //            setTimeout(function() {
- //                currentQuestion++;
- //            });
+function nextQuestion() {
+	currentQuestion++;
+	console.log(currentQuestion)
+}
 
- //        } else {
- //            $("#timer").html("Time remaining: " + "00:" + _t.count + " secs");
- //        }
- //    };
+
+
