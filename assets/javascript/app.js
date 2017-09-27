@@ -4,10 +4,10 @@ var firstRun = true;
 var incorrect= 0;
 var skipped= 0;
 var currentQuestion = 0;
-var firstTime = true;
-var timeRemain = 5;
+var timeRemain = 10;
 var correctAnswer;
 var timerId;
+var buttonClick;
 // questions and answers
 var questions  = [{
 	question: "Which US state is named on the label of a Jack Daniels bottle",
@@ -34,10 +34,6 @@ var questions  = [{
 	answer: ["Forearm", "Big Toe", "Pinky Toe", "Elbow"],
 	correct: 1,
 }, {
-	question: "In the human body what is the hallux",
-	answer: ["Forearm", "Big Toe", "Pinky Toe", "Elbow"],
-	correct: 1,
-}, {
 	question: "Which of these is a real variety of Yam",
 	answer: ["Sandra", "Amy", "Jessica", "Lucy"],
 	correct: 3,
@@ -58,7 +54,7 @@ var questions  = [{
 	answer: ["Jessie J", "Jessie G", "Jessie C", "Jessie D"],
 	correct: 0,
 }, {
-	question: "How many times did Spaniard Seve Ballesteros win The Open”",
+	question: "How many times did Spaniard Seve Ballesteros win The Open",
 	answer: ["4", "1", "3", "2"],
 	correct: 2,
 }, {
@@ -71,13 +67,32 @@ var questions  = [{
 	correct: 2,
 }];
 
+// start button to begin
+$(document).ready(function() {
+	if (firstRun = true) {
+	$('#start').on('click',function () {
+		$(this).hide();
+		firstRun = false;
+	showQuestion();	
+	})
+	}
+});
+
+// click event listener
+$(document).on("click", "button", function (){
+	var highlight = $(this).css("background-color", "yellow");
+	buttonClick = $(this).attr("data-id");
+	setAnswer();
+});
+
 // reset display
 var reset = function() {
 	clearInterval(timerId);
 	$('#question').html("");
 	$('#answers').html("");
 	$('#image').html("");
-	timeRemain = 15;
+	$('#answerStatus').html("");
+	timeRemain = 10;
 	showQuestion();
 };
 
@@ -90,20 +105,22 @@ function timer() {
 		$('#question').html("<h1>Sorry, Time's up!</h1>");
 		$('#answers').html("<h1>The correct answer is "+ questions[currentQuestion].answer[correctAnswer] +"</h1>");
 		skipped++;
-		console.log("skipped " + skipped)
 		newQuestion();
 	}
-	timeRemain--;
-	
+	timeRemain--;	
 }
 
+// pull questions and answers from object groups
 function showQuestion() {
-	var question = questions[currentQuestion].question;
-	var numAnswers = questions[currentQuestion].answer.length;
-	correctAnswer = questions[currentQuestion].correct;
-	var buttonsArr = [];
-	var choice;
-	if (questions[currentQuestion]){
+	$('#correct').text("Correct Answers: " + correct);
+	$('#inCorrect').text("Inorrect Answers: " + incorrect);
+	$('#skipped').text("Skipped Questions: " + skipped);
+	if (currentQuestion < questions.length){
+		var question = questions[currentQuestion].question;
+		var numAnswers = questions[currentQuestion].answer.length;
+		correctAnswer = questions[currentQuestion].correct;
+		var buttonsArr = [];
+		var choice;
 		// set answer buttons
 		$('#question').text(question + "?");
         for (i = 0; i < numAnswers; i++) {
@@ -111,48 +128,33 @@ function showQuestion() {
             var button = $('<button>');
             button.text(choice);
             button.attr('data-id', choice);
-            $('#answers').append(button);
-            console.log("run setanswer");   
-     	} setAnswer(); 
+            $('#answers').append(button);  
+     	} 
     } else {
+    // reset game once all questions are done
  	$('#answers').html("<input id = 'reset' type='submit' value='Restart Game'>");
  	};
  	timerId = setInterval(timer,1000);
 };
 
-
-     
-$(document).ready(function() {
-	if (firstRun = true) {
-	$('#start').on('click',function () {
-		$(this).hide();
-		firstRun = false;
-	showQuestion();	
-	})
-	}
-});
-
-// answer button functionality
+// check answers
 function setAnswer() {
 $("#timer").html("Time remaining: "+ timeRemain + " secs");
-$("#answers").on("click", "button", function nextQuestion(){
-	console.log("current question "+currentQuestion);
 	clearInterval(timerId);
-	var highlight = $(this).css("background-color", "yellow");
+	
 	// correct answer selected
-	if ($(this).text() == questions[currentQuestion].answer[correctAnswer]) {
-	$("#answerStatus").html("That's right! Great job!");
+	if ((buttonClick) == questions[currentQuestion].answer[correctAnswer]) {
+	$("#answerStatus").html("<h1>That's right! Great job!</h1>");
 	correct++;
-	console.log("correct " + correct);
 	} else {
+	clearInterval(timerId);
 	$("#answerStatus").html("<h1>Sorry, the correct answer is "+ questions[currentQuestion].answer[correctAnswer] +"</h1>");
 	incorrect++;
-	console.log("incorrect" + incorrect);
 	}
 	newQuestion();	
-	})
 };
 
+// increnemt current question count, delay before reset page
 function newQuestion() {
 	currentQuestion++;
 	setTimeout(reset,1000*2);
