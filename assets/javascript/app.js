@@ -70,7 +70,7 @@ var questions  = [{
 // start button to begin
 $(document).ready(function() {
 	if (firstRun = true) {
-	$('.startButton').on('click',function () {
+	$('#start').on('click',function () {
 		$(this).hide();
 		firstRun = false;
 	showQuestion();	
@@ -97,20 +97,21 @@ var reset = function() {
 };
 
 var resetScore = function() {
-	correct= 0;
-	incorrect= 0;
-	skipped= 0;
+	correct = 0;
+	incorrect = 0;
+	skipped = 0;
+	currentQuestion	= 0;
 	reset();
 };
 
 // countdown timer
 function timer() {	
-	$("#timer").html("Time remaining: "+ timeRemain + " secs");
+	$("#timer").html("Time remaining: "+ timeRemain + " Seconds");
 	//if time runs out
 	if (timeRemain == 0) {
 		clearInterval(timerId);
 		$('#question').html("<h2>Sorry, Time's up!</h2>");
-		$('#answers').html("<h2>The correct answer is "+ questions[currentQuestion].answer[correctAnswer] +"</h2>");
+		$('#answerStatus').html("<h2>The correct answer is "+ questions[currentQuestion].answer[correctAnswer] +"</h2>");
 		skipped++;
 		newQuestion();
 	}
@@ -122,6 +123,7 @@ function showQuestion() {
 	$('#correct').text("Correct Answers: " + correct);
 	$('#inCorrect').text("Inorrect Answers: " + incorrect);
 	$('#skipped').text("Skipped Questions: " + skipped);
+	$("#timer").html("Time remaining: "+ timeRemain + " Seconds");
 	if (currentQuestion < questions.length){
 		var question = questions[currentQuestion].question;
 		var numAnswers = questions[currentQuestion].answer.length;
@@ -139,18 +141,18 @@ function showQuestion() {
      	} 
     } else {
     // reset game once all questions are done
-    
- 	$('#answers').html("<input id = 'reset' type='submit' value='Restart Game'>");
- 	clearInterval(timerId);
+    clearInterval(timerId);
+ 	$('#answers').html("<Button data-id='reset'>Restart Game</button>");
  	};
  	timerId = setInterval(timer,1000);
 };
 
 // check answers
 function setAnswer() {
-$("#timer").html("Time remaining: "+ timeRemain + " Seconds");
+
 	// correct answer selected
 	clearInterval(timerId);
+	console.log(buttonClick);
 	if ((buttonClick) == questions[currentQuestion].answer[correctAnswer]) {
 	$("#answerStatus").html("<h2>That's right! Great job!</h2>");
 	correct++;
