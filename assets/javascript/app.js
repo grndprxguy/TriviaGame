@@ -110,7 +110,6 @@ var reset = function() {
 	$('#question').html("");
 	$('#answers').html("");
 	$('#image').html("");
-	$('#answerStatus').html("");
 	timeRemain = 10;
 	showQuestion();
 };
@@ -141,7 +140,7 @@ function timer() {
 	if (timeRemain == 0) {
 		clearInterval(timerId);
 		$('#question').html("<h2>Sorry, Time's up!</h2>");
-		$('#answerStatus').html("<h2>The correct answer is "+ questions[currentQuestion].answer[correctAnswer] +"</h2>");
+		$('#answers').html("<h2>The correct answer is "+ questions[currentQuestion].answer[correctAnswer] +"</h2>");
 		giphy();
 		skipped++;
 		newQuestion();
@@ -185,14 +184,14 @@ function setAnswer() {
 	// correct answer selected
 	clearInterval(timerId);
 	if ((buttonClick) == questions[currentQuestion].answer[correctAnswer]) {
-	$("#answerStatus").html("<h2>That's right! Great job!</h2>");
+	$("#answers").html("<h2>That's right! Great job!</h2>");
 	correct++;
 	} else if ((buttonClick == reset)) {
 		resetScore();
 	} else {
 	// incorrect answer selected
 	clearInterval(timerId);
-	$("#answerStatus").html("<h2>Sorry, the correct answer is "+ questions[currentQuestion].answer[correctAnswer] +"</h2>");
+	$("#answers").html("<h2>Sorry, the correct answer is "+ questions[currentQuestion].answer[correctAnswer] +"</h2>");
 	incorrect++;
 	}
 	giphy();
