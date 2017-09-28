@@ -1,6 +1,6 @@
 // set variables
-var correct= 0;
 var firstRun = true;
+var correct= 0;
 var incorrect= 0;
 var skipped= 0;
 var currentQuestion = 0;
@@ -48,7 +48,7 @@ var questions  = [{
 }, {
 	question: "Richard Branson founded which major airline",
 	answer: ["Quantas", "Southwest Airlines", "Virgin", "Emirates"],
-	correct: 1,
+	correct: 2,
 }, {
 	question: "Which Jessie had a 2011 hit with “Price Tag”",
 	answer: ["Jessie J", "Jessie G", "Jessie C", "Jessie D"],
@@ -70,7 +70,7 @@ var questions  = [{
 // start button to begin
 $(document).ready(function() {
 	if (firstRun = true) {
-	$('#start').on('click',function () {
+	$('.startButton').on('click',function () {
 		$(this).hide();
 		firstRun = false;
 	showQuestion();	
@@ -96,14 +96,21 @@ var reset = function() {
 	showQuestion();
 };
 
+var resetScore = function() {
+	correct= 0;
+	incorrect= 0;
+	skipped= 0;
+	reset();
+};
+
 // countdown timer
 function timer() {	
 	$("#timer").html("Time remaining: "+ timeRemain + " secs");
 	//if time runs out
 	if (timeRemain == 0) {
 		clearInterval(timerId);
-		$('#question').html("<h1>Sorry, Time's up!</h1>");
-		$('#answers').html("<h1>The correct answer is "+ questions[currentQuestion].answer[correctAnswer] +"</h1>");
+		$('#question').html("<h2>Sorry, Time's up!</h2>");
+		$('#answers').html("<h2>The correct answer is "+ questions[currentQuestion].answer[correctAnswer] +"</h2>");
 		skipped++;
 		newQuestion();
 	}
@@ -132,23 +139,27 @@ function showQuestion() {
      	} 
     } else {
     // reset game once all questions are done
+    
  	$('#answers').html("<input id = 'reset' type='submit' value='Restart Game'>");
+ 	clearInterval(timerId);
  	};
  	timerId = setInterval(timer,1000);
 };
 
 // check answers
 function setAnswer() {
-$("#timer").html("Time remaining: "+ timeRemain + " secs");
-	clearInterval(timerId);
-	
+$("#timer").html("Time remaining: "+ timeRemain + " Seconds");
 	// correct answer selected
-	if ((buttonClick) == questions[currentQuestion].answer[correctAnswer]) {
-	$("#answerStatus").html("<h1>That's right! Great job!</h1>");
-	correct++;
-	} else {
 	clearInterval(timerId);
-	$("#answerStatus").html("<h1>Sorry, the correct answer is "+ questions[currentQuestion].answer[correctAnswer] +"</h1>");
+	if ((buttonClick) == questions[currentQuestion].answer[correctAnswer]) {
+	$("#answerStatus").html("<h2>That's right! Great job!</h2>");
+	correct++;
+	} else if ((buttonClick == reset)) {
+		resetScore();
+	} else {
+	// incorrect answer selected
+	clearInterval(timerId);
+	$("#answerStatus").html("<h2>Sorry, the correct answer is "+ questions[currentQuestion].answer[correctAnswer] +"</h2>");
 	incorrect++;
 	}
 	newQuestion();	
