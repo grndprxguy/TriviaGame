@@ -172,8 +172,8 @@ function showQuestion() {
      	} 
     } else {
     // reset game once all questions are done
+    $("#timer").html("");
     clearInterval(timerId);
-    $("#timer").hide;
  	$('#answers').html("<Button data-id='reset'>Restart Game</button>");
  	};
  	
